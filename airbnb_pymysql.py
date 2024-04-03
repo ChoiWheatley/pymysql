@@ -63,6 +63,19 @@ def find_one(con: pymysql.connections.Connection, from_table: str, column: str, 
         return cursor.fetchone()
 
 
+def find_max_orders(con: pymysql.connections.Connection) -> Dict:
+    """
+    가장 많이 주문한 고객 찾기: 'Orders' 테이블을 사용하여 가장 많은 주문을 한 고객을 찾는 Python 스크립트를 작성하세요.
+    """
+    with con.cursor() as cursor:
+        sql = """
+                SELECT customerID, COUNT(*) AS orderCount FROM Orders 
+                GROUP BY customerID ORDER BY orderCount DESC
+        """
+        cursor.execute(sql)
+        return cursor.fetchone()
+
+
 if __name__ == "__main__":
     con = pymysql.connect(
         host="localhost",
@@ -100,8 +113,12 @@ if __name__ == "__main__":
     # print("============== AFTER DELETE ============")
     # for book in get_all(con, "Orders"):
     #     pprint(book)
-    
-    result = find_one(con, "Products", "productName", "우아아아")
+
+    # result = find_one(con, "Products", "productName", "우아아아")
+    # print("============== FIND RESULT =============")
+    # pprint(result)
+
+    result = find_max_orders(con)
     print("============== FIND RESULT =============")
     pprint(result)
 
