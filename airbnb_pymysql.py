@@ -53,6 +53,16 @@ def delete_one_order(con: pymysql.connections.Connection, id: int):
         con.commit()
 
 
+def find_one(con: pymysql.connections.Connection, from_table: str, column: str, like: str) -> Dict:
+    """
+    특정 제품 검색: 제품 이름을 기반으로 'Products' 테이블에서 제품을 검색하는 Python 스크립트를 작성하세요.
+    """
+    with con.cursor() as cursor:
+        sql = f"SELECT * from {from_table} WHERE {column} LIKE %s"
+        cursor.execute(sql, like)
+        return cursor.fetchone()
+
+
 if __name__ == "__main__":
     con = pymysql.connect(
         host="localhost",
@@ -86,10 +96,14 @@ if __name__ == "__main__":
     # for customer in get_all(con, "Customers"):
     #     pprint(customer)
 
-    delete_one_order(con, 1)
-    print("============== AFTER DELETE ============")
-    for book in get_all(con, "Orders"):
-        pprint(book)
+    # delete_one_order(con, 1)
+    # print("============== AFTER DELETE ============")
+    # for book in get_all(con, "Orders"):
+    #     pprint(book)
+    
+    result = find_one(con, "Products", "productName", "우아아아")
+    print("============== FIND RESULT =============")
+    pprint(result)
 
 
     con.close()
