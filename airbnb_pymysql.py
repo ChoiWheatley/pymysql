@@ -46,6 +46,13 @@ def get_total_orders_of_customer(con: pymysql.connections.Connection) -> Dict:
         return cursor.fetchall()
 
 
+def delete_one_order(con: pymysql.connections.Connection, id: int):
+    with con.cursor() as cursor:
+        sql = "DELETE FROM Orders WHERE orderID = %s"
+        cursor.execute(sql, id)
+        con.commit()
+
+
 if __name__ == "__main__":
     con = pymysql.connect(
         host="localhost",
@@ -78,5 +85,11 @@ if __name__ == "__main__":
     # print("============== AFTER update_customer_email ============")
     # for customer in get_all(con, "Customers"):
     #     pprint(customer)
+
+    delete_one_order(con, 1)
+    print("============== AFTER DELETE ============")
+    for book in get_all(con, "Orders"):
+        pprint(book)
+
 
     con.close()
