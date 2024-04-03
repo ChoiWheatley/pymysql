@@ -11,9 +11,9 @@ def create_product(con: pymysql.connections.Connection, name: str, price: int, q
         con.commit()
 
 
-def get_all_product(con: pymysql.connections.Connection) -> Dict:
+def get_all(con: pymysql.connections.Connection, table_name: str) -> Dict:
     with con.cursor() as cursor:
-        sql = "SELECT * FROM Products"
+        sql = f"SELECT * FROM {table_name}"
         cursor.execute(sql)
         return cursor.fetchall()
 
@@ -23,6 +23,16 @@ def update_product(con: pymysql.connections.Connection, id: int):
     with con.cursor() as cursor:
         sql = "UPDATE Products SET stockQuantity = stockQuantity - %s WHERE productID = %s"
         cursor.execute(sql, (1, id))
+        con.commit()
+
+
+def update_customer_email(con: pymysql.connections.Connection, id: int, email: str):
+    """
+    고객의 이메일 주소를 업데이트하는 Python 스크립트를 작성하세요. 고객 ID를 입력받고, 새로운 이메일 주소로 업데이트합니다.
+    """
+    with con.cursor() as cursor:
+        sql = "UPDATE Customers SET email = %s WHERE customerID = %s"
+        cursor.execute(sql, (email, id))
         con.commit()
 
 
@@ -47,7 +57,7 @@ if __name__ == "__main__":
     )
 
     print("============== BEFORE ============")
-    for book in get_all_product(con):
+    for book in get_all(con, "Products"):
         pprint(book)
 
     # create_product(con, "우아아아", 10000, 10)
@@ -60,8 +70,13 @@ if __name__ == "__main__":
     # for book in get_all_product(con):
     #     pprint(book)
 
-    print("============== RESULT ============")
-    for res in get_total_orders_of_customer(con):
-        pprint(res)
+    # print("============== RESULT ============")
+    # for res in get_total_orders_of_customer(con):
+    #     pprint(res)
+
+    # update_customer_email(con, 1, "chltmdgus604@naver.com")
+    # print("============== AFTER update_customer_email ============")
+    # for customer in get_all(con, "Customers"):
+    #     pprint(customer)
 
     con.close()
